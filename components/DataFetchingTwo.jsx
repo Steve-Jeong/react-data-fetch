@@ -35,22 +35,18 @@ const reducer = (state, action) => {
 
 function DataFetchingTwo() {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [id, setId] = useState('')
-  const [search, setSearch] = useState('1')
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('search : ', id)
-    setSearch(e.target.id.value)
-    setId('')
+    fetchData()
   }
-  useEffect(() => {
+
+  function fetchData() {
     dispatch({type:'FETCHING'})
     // console.log('fetching ', state.error);
 
     // console.log('post before fetch', typeof state.post.title)
 
-    if(search === '') return;
     // axios를 사용
     // axios.get(`https://jsonplaceholder.typicode.com/posts/${search}`)
     //   .then(response => {
@@ -68,7 +64,7 @@ function DataFetchingTwo() {
       // axios를 사용
 
     // fetch를 사용
-    fetch(`https://jsonplaceholder.typicode.com/posts/${search}`)
+    fetch(`https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,racist,sexist&type=twopart`)
       .then(response => {
         if(response.ok) return response.json()
         dispatch({tyep:'FETCH_ERROR'})
@@ -82,14 +78,17 @@ function DataFetchingTwo() {
       .catch(error => {
         dispatch({type:'FETCH_ERROR'})
       })
-  }, [search])
-  
+  }
+
+
   return (
     <div>
-      <h1>Data Fetching</h1>
+      <h1>Joke Fetching</h1>
+      
       {state.loading 
         ? 'Loading ...' 
-        : state.post.title
+        : `${state.post.setup}
+            -> ${state.post.delivery}`
       }
       {/* {state.loading 
         ? 'Loading ...' 
@@ -99,8 +98,7 @@ function DataFetchingTwo() {
       } */}
       {state.error ? state.error : null}
       <form onSubmit={handleSubmit}>
-        <input type='text' value={id} placeholder='type post id' name='id' onChange={(e) => setId(e.target.value)} />
-        <button type='submit'>Get Post</button>
+        <button type='submit'>Get new joke</button>
       </form>
     </div>
   )
